@@ -1,0 +1,34 @@
+.eventcard__container {
+  display: flex;
+  flex-wrap: wrap;
+  height: 100%;
+
+  .eventcard__primary-info-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+    .eventcard__date {
+      flex: 1;
+      font-weight: bold;
+    }
+    .eventcard__title {
+      flex: 1;
+    }
+  }
+  .eventcard__secundary-info-container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+    padding-top: 40px;
+    .eventcard__confirmedPeople {
+      flex: 0 0;
+    }
+    .eventcard__sum {
+      flex: 0 0;
+    }
+  }
+}

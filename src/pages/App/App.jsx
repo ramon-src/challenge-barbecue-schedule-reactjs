@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 import Router from 'route';
 import { Container } from '@material-ui/core';
 
