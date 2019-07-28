@@ -3,8 +3,8 @@ import { Card, CardActions, CardContent } from '@material-ui/core';
 
 const CardWrapper = ({ content, actions }) => (
   <Card>
-    <CardContent>{content}</CardContent>
-    <CardActions>{actions}</CardActions>
+    {content ? <CardContent>{content}</CardContent> : ''}
+    {actions ? <CardActions>{actions}</CardActions> : ''}
   </Card>
 );
 
