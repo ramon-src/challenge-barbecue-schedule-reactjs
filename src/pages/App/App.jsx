@@ -1,11 +1,17 @@
 import React from 'react';
 import Router from 'route';
-import { Container } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 
 const App = () => (
-  <Container className="App">
+  <Grid
+    className="App"
+    container
+    direction="column"
+    justify="center"
+    alignItems="center"
+  >
     <Router></Router>
-  </Container>
+  </Grid>
 );
 
 export default App;
