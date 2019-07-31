@@ -1,40 +1,38 @@
 import React, { Suspense, lazy, useState, useEffect } from 'react';
-import { Grid, CircularProgress } from '@material-ui/core';
+import { Grid, Fab, CircularProgress } from '@material-ui/core';
+import API from 'services/API'
+import { Add as AddIcon } from '@material-ui/icons';
+import moment from 'moment'
+import('./EventListPage.scss')
 const EventCard = lazy(() => import('components/EventList/EventCard'));
+const EventForm = lazy(() => import('./EventForm'));
 
-let EventListData = [
-  {
-    id: 1,
-    title: 'Aniver do Gui',
-    date: '01/12',
-    confirmedPeople: 15,
-    sum: 280
-  },
-  {
-    id: 2,
-    title: 'Final de ano',
-    date: '23/12',
-    confirmedPeople: 28,
-    sum: 400
-  },
-  { id: 3, title: 'Sem motivo', date: '06/01', confirmedPeople: 12, sum: 140 },
-  { id: 4, title: 'Sem motivo', date: '06/01', confirmedPeople: 12, sum: 140 },
-  { id: 5, title: 'Sem motivo', date: '06/01', confirmedPeople: 12, sum: 140 }
-];
 
 const EventListPage = () => {
-  const [eventList, setEventList] = useState(EventListData);
 
+  const [open, setOpen] = useState(false);
+  function handleClickOpen() {
+    setOpen(true);
+  }
+  function handleClose() {
+    setOpen(false);
+  }
+
+  const [eventList, setEventList] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
-      const result = await Promise.resolve(EventListData);
-      setEventList(result);
+      const resp = await API.get('/events/list');  
+      setEventList(resp.data);
     };
     fetchData();
-  }, [eventList]);
+  }, []);
 
+  const addEvent = (event) => {
+    setEventList(eventList.concat(event))
+    handleClose()
+  }
   return (
-    <div>
+    <div className="eventlistpage">
       <Grid container>
         <Grid container item xs={12} direction="row" justify="center">
           <div className="eventlistpage__title">Barbecue Schedule</div>
@@ -42,19 +40,22 @@ const EventListPage = () => {
 
         <Grid container item xs={12}>
           <Grid container spacing={2}>
+
             {eventList.length > 0 ? (
+
               eventList.map(event => (
-                <Grid item key={event.id} xs={6} md={4} lg={3}>
+                <Grid item key={event._id} xs={6} md={4} lg={3}>
                   <Suspense maxDuration={1000} fallback={<CircularProgress />}>
                     <EventCard
                       title={event.title}
-                      date={event.date}
+                      date={moment(event.date).format('DD/MM hh:mm')}
                       confirmedPeople={event.confirmedPeople}
                       sum={event.sum}
                     ></EventCard>
                   </Suspense>
                 </Grid>
               ))
+
             ) : (
               <div className="eventlistpage__no-events">
                 Hey, you don't have any event created.
@@ -62,6 +63,10 @@ const EventListPage = () => {
             )}
           </Grid>
         </Grid>
+        <Fab className="eventlistpage__add-btn" aria-label="add" color="primary" onClick={handleClickOpen}>
+          <AddIcon />
+        </Fab>
+        { open ? <EventForm open={open} triggerAddEvent={addEvent} triggerClose={handleClose}></EventForm> : "" }
       </Grid>
     </div>
   );

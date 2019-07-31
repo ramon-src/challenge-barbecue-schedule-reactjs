@@ -2,7 +2,7 @@ import React, { lazy } from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
 import WaitComponent from 'components/Wrappers/WaitComponent';
 
-const EventListPage = lazy(() => import('pages/EventListPage'));
+const EventListPage = lazy(() => import('pages/EventListPage/EventListPage'));
 
 const Router = () => (
   <BrowserRouter>
