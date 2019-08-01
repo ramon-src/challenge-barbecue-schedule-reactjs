@@ -5,9 +5,4 @@ let axiosCreated = axios.create({
   baseURL: process.env.REACT_APP_API_URL
 });
 
-export default {
-  get: axiosCreated.get,
-  post: axiosCreated.post,
-  delete: axiosCreated.delete,
-  put: axiosCreated.put
-};
+export default axiosCreated;

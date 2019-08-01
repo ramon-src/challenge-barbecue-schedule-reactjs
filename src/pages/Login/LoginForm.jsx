@@ -4,6 +4,8 @@ import CardWrapper from 'components/Wrappers/CardWrapper';
 import API from 'services/API';
 import { useDispatch } from 'redux-react-hook';
 import { addUser, removeUser } from 'store/actions';
+import AuthService from 'services/Auth';
+import URL from 'route/URL';
 
 const LoginForm = ({ history }) => {
   const [email, setEmail] = useState('');
@@ -12,9 +14,10 @@ const LoginForm = ({ history }) => {
 
   const signIn = async function() {
     try {
-      const resp = await API.post('/auth/signIn', { email, password });
-      dispatch(addUser(resp.data));
-      history.push('/events');
+      const { data } = await API.post(URL.AUTH.SIGN_IN, { email, password });
+      AuthService.register(data);
+      dispatch(addUser(data));
+      history.push(URL.EVENTS.LIST);
     } catch (e) {
       console.error(e);
       dispatch(removeUser());
