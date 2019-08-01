@@ -1,14 +1,26 @@
 import React, { useState } from 'react';
 import { Grid, Button, Typography, TextField } from '@material-ui/core';
 import CardWrapper from 'components/Wrappers/CardWrapper';
+import API from 'services/API';
+import { useDispatch } from 'redux-react-hook';
+import { addUser, removeUser } from 'store/actions';
 
-const LoginForm = ({ triggerLogin }) => {
+const LoginForm = ({ history }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
 
-  const signIn = () => {
-    triggerLogin({ email, password });
+  const signIn = async function() {
+    try {
+      const resp = await API.post('/auth/signIn', { email, password });
+      dispatch(addUser(resp.data));
+      history.push('/events');
+    } catch (e) {
+      console.error(e);
+      dispatch(removeUser());
+    }
   };
+
   return (
     <CardWrapper
       content={
