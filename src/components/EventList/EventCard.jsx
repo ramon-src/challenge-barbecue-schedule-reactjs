@@ -1,6 +1,7 @@
 import React from 'react';
 import CardWrapper from 'components/Wrappers/CardWrapper';
 import PropTypes from 'prop-types';
+import { PeopleOutline, MonetizationOn } from '@material-ui/icons';
 import('./EventCard.scss');
 
 const EventCard = ({ id, date, title, confirmedPeople, sum, triggerClick }) => (
@@ -13,8 +14,14 @@ const EventCard = ({ id, date, title, confirmedPeople, sum, triggerClick }) => (
         </div>
 
         <div className="eventcard__secundary-info-container">
-          <div className="eventcard__confirmedPeople">{confirmedPeople}</div>
-          <div className="eventcard__sum">{sum}</div>
+          <div className="eventcard__confirmedPeople">
+            <PeopleOutline color="secondary" />
+            <span>{confirmedPeople}</span>
+          </div>
+          <div className="eventcard__sum">
+            <MonetizationOn color="secondary" />
+            <span>{sum}</span>
+          </div>
         </div>
       </div>
     }
