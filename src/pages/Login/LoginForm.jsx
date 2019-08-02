@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Grid, Button, Typography, TextField } from '@material-ui/core';
-import CardWrapper from 'components/Wrappers/CardWrapper';
+import { Grid, TextField, Fab } from '@material-ui/core';
 import API from 'services/API';
 import { useDispatch } from 'redux-react-hook';
 import { addUser, removeUser } from 'store/actions';
 import AuthService from 'services/Auth';
 import URL from 'route/URL';
+import('pages/Login/LoginForm.scss');
 
 const LoginForm = ({ history }) => {
   const [email, setEmail] = useState('');
@@ -25,47 +25,43 @@ const LoginForm = ({ history }) => {
   };
 
   return (
-    <CardWrapper
-      content={
-        <div className="loginform__container">
-          <Typography gutterBottom variant="h5" component="h2">
-            Make a Barbecue, with us!
-          </Typography>
+    <Grid container className="loginform">
+      <Grid container item justify="space-around">
+        <TextField
+          id="loginform__email-input"
+          label="Email"
+          placeholder="Type somethinglike@gmail.com"
+          margin="normal"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          fullWidth
+        />
+      </Grid>
 
-          <Grid container justify="space-around">
-            <TextField
-              id="loginform__email-input"
-              label="Email"
-              placeholder="Type somethinglike@gmail.com"
-              margin="normal"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              fullWidth
-            />
-          </Grid>
-
-          <Grid container justify="space-around">
-            <TextField
-              id="loginform__password-input"
-              label="Password"
-              type="password"
-              placeholder="Don't let anyone see!!!"
-              margin="normal"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              fullWidth
-            />
-          </Grid>
-        </div>
-      }
-      actions={
-        <Grid container direction="row" justify="flex-end" alignItems="center">
-          <Button onClick={signIn} color="primary">
-            Sign In!
-          </Button>
-        </Grid>
-      }
-    ></CardWrapper>
+      <Grid container item justify="space-around">
+        <TextField
+          id="loginform__password-input"
+          label="Password"
+          type="password"
+          placeholder="Don't let anyone see!!!"
+          margin="normal"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          fullWidth
+        />
+      </Grid>
+      <Grid container item justify="space-around">
+        <Fab
+          variant="extended"
+          size="large"
+          color="secondary"
+          className="loginform__signin-btn"
+          onClick={signIn}
+        >
+          Sign In!
+        </Fab>
+      </Grid>
+    </Grid>
   );
 };
 
