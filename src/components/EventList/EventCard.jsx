@@ -3,10 +3,10 @@ import CardWrapper from 'components/Wrappers/CardWrapper';
 import PropTypes from 'prop-types';
 import('./EventCard.scss');
 
-const EventCard = ({ date, title, confirmedPeople, sum }) => (
+const EventCard = ({ id, date, title, confirmedPeople, sum, triggerClick }) => (
   <CardWrapper
     content={
-      <div className="eventcard__container">
+      <div className="eventcard__container" onClick={() => triggerClick(id)}>
         <div className="eventcard__primary-info-container">
           <div className="eventcard__date">{date}</div>
           <div className="eventcard__title">{title}</div>
@@ -24,6 +24,7 @@ const EventCard = ({ date, title, confirmedPeople, sum }) => (
 EventCard.propTypes = {
   title: PropTypes.string,
   date: PropTypes.string,
+  id: PropTypes.string,
   confirmedPeople: PropTypes.number,
   sum: PropTypes.number
 };

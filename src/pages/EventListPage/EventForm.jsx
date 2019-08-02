@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useMappedState } from 'redux-react-hook';
+
 import {
   Dialog,
   DialogContent,
@@ -38,13 +40,14 @@ const EventForm = ({ open, triggerAddEvent, triggerClose }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const classes = useStyles();
-
   const [selectedDate, handleDateChange] = useState(new Date());
-  const [_id, setId] = useState('');
   const [title, setTitle] = useState('');
   const [observation, setObservation] = useState('');
   const [contributionWithDrink, setContributionWithDrink] = useState('');
   const [contribution, setContribution] = useState('');
+
+  const mapState = useCallback(state => state.user.id, []);
+  const responsibleId = useMappedState(mapState);
 
   async function save() {
     try {
@@ -53,9 +56,15 @@ const EventForm = ({ open, triggerAddEvent, triggerClose }) => {
         date: selectedDate,
         observation,
         contributionWithDrink,
-        contribution
+        contribution,
+        responsible: responsibleId
       });
-      triggerAddEvent({ _id: resp.data, title: title, date: selectedDate });
+      triggerAddEvent({
+        id: resp.data,
+        title: title,
+        date: selectedDate,
+        responsible: responsibleId
+      });
     } catch (e) {
       console.error(e);
     }

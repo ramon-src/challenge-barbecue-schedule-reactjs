@@ -8,7 +8,7 @@ jest.mock('services/API');
 
 describe('EventListPage', () => {
   it('should render title', () => {
-    const eventListPage = shallow(<EventListPage />);
+    const eventListPage = mount(<EventListPage />);
     expect(eventListPage.find('.eventlistpage__title').text()).toBe(
       'Barbecue Schedule'
     );

@@ -3,20 +3,35 @@ import { Grid, Container, Fab, CircularProgress } from '@material-ui/core';
 import API from 'services/API';
 import { Add as AddIcon } from '@material-ui/icons';
 import moment from 'moment';
+import EventTitle from 'components/EventList/EventTitle';
+import EventConfirmationForm from './EventConfirmationForm';
+import EventForm from './EventForm';
 import('./EventListPage.scss');
 const EventCard = lazy(() => import('components/EventList/EventCard'));
-const EventForm = lazy(() => import('./EventForm'));
 
 const EventListPage = () => {
   const [open, setOpen] = useState(false);
+  const [openConfirmation, setOpenConfirmation] = useState(false);
+  const [eventIdToBeConfirmed, setEventIdToBeConfirmed] = useState('');
+  const [contributions, setContributions] = useState({
+    contribution: null,
+    contributionWithDrink: null
+  });
   function handleClickOpen() {
     setOpen(true);
   }
   function handleClose() {
     setOpen(false);
   }
-
+  function confirmCanceled() {
+    setOpenConfirmation(false);
+  }
   const [eventList, setEventList] = useState([]);
+  const addEvent = event => {
+    setEventList(eventList.concat(event));
+    handleClose();
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const resp = await API.get('/events/list');
@@ -25,28 +40,37 @@ const EventListPage = () => {
     fetchData();
   }, []);
 
-  const addEvent = event => {
-    setEventList(eventList.concat(event));
-    handleClose();
-  };
+  function confirmSaved(isSaved) {
+    setOpenConfirmation(isSaved);
+  }
+
+  function handleConfirmation(id) {
+    setOpenConfirmation(true);
+    setEventIdToBeConfirmed(id);
+    let { contribution = null, contributionWithDrink = null } = eventList.find(
+      event => event.id === id
+    );
+    setContributions({ contribution, contributionWithDrink });
+  }
+
   return (
     <Container>
       <div className="eventlistpage">
-        <Grid container item xs={12} direction="row" justify="center">
-          <div className="eventlistpage__title">Barbecue Schedule</div>
-        </Grid>
+        <EventTitle title="Barbecue Schedule" classes="eventlistpage__title" />
 
         <Grid container item xs={12}>
           <Grid container spacing={2}>
             {eventList.length > 0 ? (
               eventList.map(event => (
-                <Grid item key={event._id} xs={6} md={4} lg={3}>
+                <Grid item key={event.id} xs={6} md={4} lg={3}>
                   <Suspense maxDuration={1000} fallback={<CircularProgress />}>
                     <EventCard
                       title={event.title}
                       date={moment(event.date).format('DD/MM hh:mm')}
-                      confirmedPeople={event.confirmedPeople}
+                      confirmedPeople={event.confirmedPeople.length}
                       sum={event.sum}
+                      id={event.id}
+                      triggerClick={handleConfirmation}
                     ></EventCard>
                   </Suspense>
                 </Grid>
@@ -72,6 +96,17 @@ const EventListPage = () => {
             triggerAddEvent={addEvent}
             triggerClose={handleClose}
           ></EventForm>
+        ) : (
+          ''
+        )}
+        {openConfirmation ? (
+          <EventConfirmationForm
+            id={eventIdToBeConfirmed}
+            open={openConfirmation}
+            contributions={contributions}
+            triggerConfirmSave={confirmSaved}
+            triggerConfirmClose={confirmCanceled}
+          ></EventConfirmationForm>
         ) : (
           ''
         )}
