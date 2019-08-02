@@ -11,12 +11,13 @@
     justify-content: flex-start;
     align-items: flex-start;
     width: 100%;
+    min-height: 100px;
     .eventcard__date {
-      flex: 1;
       font-weight: bold;
     }
     .eventcard__title {
-      flex: 1;
+      line-height: 22px;
+      padding-top: 10px;
     }
   }
   .eventcard__secundary-info-container {
@@ -25,12 +26,16 @@
     justify-content: space-between;
     align-items: flex-end;
     width: 100%;
-    padding-top: 40px;
+    svg {
+      margin-right: 5px;
+    }
     .eventcard__confirmedPeople {
-      flex: 0 0;
+      display: flex;
+      align-items: center;
     }
     .eventcard__sum {
-      flex: 0 0;
+      display: flex;
+      align-items: center;
     }
   }
   .eventcard__confirmation {

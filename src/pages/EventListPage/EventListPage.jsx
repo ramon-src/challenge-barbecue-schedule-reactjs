@@ -3,7 +3,7 @@ import { Grid, Container, Fab, CircularProgress } from '@material-ui/core';
 import API from 'services/API';
 import { Add as AddIcon } from '@material-ui/icons';
 import moment from 'moment';
-import EventTitle from 'components/EventList/EventTitle';
+import Title from 'components/Title';
 import EventConfirmationForm from './EventConfirmationForm';
 import EventForm from './EventForm';
 import('./EventListPage.scss');
@@ -12,11 +12,8 @@ const EventCard = lazy(() => import('components/EventList/EventCard'));
 const EventListPage = () => {
   const [open, setOpen] = useState(false);
   const [openConfirmation, setOpenConfirmation] = useState(false);
-  const [eventIdToBeConfirmed, setEventIdToBeConfirmed] = useState('');
-  const [contributions, setContributions] = useState({
-    contribution: null,
-    contributionWithDrink: null
-  });
+  const [eventToBeConfirmed, setEventToBeConfirmed] = useState({});
+
   function handleClickOpen() {
     setOpen(true);
   }
@@ -26,7 +23,100 @@ const EventListPage = () => {
   function confirmCanceled() {
     setOpenConfirmation(false);
   }
+  // {
+  //   title: "Aniversario da Sabrina",
+  //   date: moment(new Date()).format('DD/MM hh:mm'),
+  //   confirmedPeople: [1],
+  //   sum: 20,
+  //   id: "asuhduhasda",
+  //   contribution: 10,
+  //   contributionWithDrink: 15,
+  //   responsible: "asuhduhasda3"
+  // },{
+  //   title: "Happy hour",
+  //   date: moment(new Date()).format('DD/MM hh:mm'),
+  //   confirmedPeople: [1,2,3,4],
+  //   sum: 200,
+  //   id: "asuhduhasda3",
+  //   contribution: 10,
+  //   contributionWithDrink: 15,
+  //   responsible: "asuhduhasda3"
+  // },{
+  //   title: "Aniversario da Sabrina",
+  //   date: moment(new Date()).format('DD/MM hh:mm'),
+  //   confirmedPeople: [1],
+  //   sum: 20,
+  //   id: "asuhduhasda",
+  //   contribution: 10,
+  //   contributionWithDrink: 15,
+  //   responsible: "asuhduhasda3"
+  // },{
+  //   title: "Happy hour",
+  //   date: moment(new Date()).format('DD/MM hh:mm'),
+  //   confirmedPeople: [1,2,3,4],
+  //   sum: 200,
+  //   id: "asuhduhasda3",
+  //   contribution: 10,
+  //   contributionWithDrink: 15,
+  //   responsible: "asuhduhasda3"
+  // },{
+  //   title: "Aniversario da Sabrina",
+  //   date: moment(new Date()).format('DD/MM hh:mm'),
+  //   confirmedPeople: [1],
+  //   sum: 20,
+  //   id: "asuhduhasda",
+  //   contribution: 10,
+  //   contributionWithDrink: 15,
+  //   responsible: "asuhduhasda3"
+  // },{
+  //   title: "Happy hour",
+  //   date: moment(new Date()).format('DD/MM hh:mm'),
+  //   confirmedPeople: [1,2,3,4],
+  //   sum: 200,
+  //   id: "asuhduhasda3",
+  //   contribution: 10,
+  //   contributionWithDrink: 15,
+  //   responsible: "asuhduhasda3"
+  // },{
+  //   title: "Aniversario da Sabrina",
+  //   date: moment(new Date()).format('DD/MM hh:mm'),
+  //   confirmedPeople: [1],
+  //   sum: 20,
+  //   id: "asuhduhasda",
+  //   contribution: 10,
+  //   contributionWithDrink: 15,
+  //   responsible: "asuhduhasda3"
+  // },{
+  //   title: "Happy hour",
+  //   date: moment(new Date()).format('DD/MM hh:mm'),
+  //   confirmedPeople: [1,2,3,4],
+  //   sum: 200,
+  //   id: "asuhduhasda3",
+  //   contribution: 10,
+  //   contributionWithDrink: 15,
+  //   responsible: "asuhduhasda3"
+  // },{
+  //   title: "Aniversario da Sabrina",
+  //   date: moment(new Date()).format('DD/MM hh:mm'),
+  //   confirmedPeople: [1],
+  //   sum: 20,
+  //   id: "asuhduhasda",
+  //   contribution: 10,
+  //   contributionWithDrink: 15,
+  //   responsible: "asuhduhasda",
+  // },{
+  //   title: "Happy hour",
+  //   date: moment(new Date()).format('DD/MM hh:mm'),
+  //   confirmedPeople: [1,2,3,4],
+  //   sum: 200,
+  //   id: "asuhduhasda3",
+  //   contribution: 10,
+  //   contributionWithDrink: 15,
+  //   responsible: "asuhduhasda3"
+  // }
+
   const [eventList, setEventList] = useState([]);
+
   const addEvent = event => {
     setEventList(eventList.concat(event));
     handleClose();
@@ -46,17 +136,14 @@ const EventListPage = () => {
 
   function handleConfirmation(id) {
     setOpenConfirmation(true);
-    setEventIdToBeConfirmed(id);
-    let { contribution = null, contributionWithDrink = null } = eventList.find(
-      event => event.id === id
-    );
-    setContributions({ contribution, contributionWithDrink });
+    let event = eventList.find(event => event.id === id);
+    setEventToBeConfirmed(event);
   }
 
   return (
     <Container>
       <div className="eventlistpage">
-        <EventTitle title="Barbecue Schedule" classes="eventlistpage__title" />
+        <Title title="Barbecue Schedule" classes="eventlistpage__title" />
 
         <Grid container item xs={12}>
           <Grid container spacing={2}>
@@ -101,9 +188,8 @@ const EventListPage = () => {
         )}
         {openConfirmation ? (
           <EventConfirmationForm
-            id={eventIdToBeConfirmed}
             open={openConfirmation}
-            contributions={contributions}
+            eventUsed={eventToBeConfirmed}
             triggerConfirmSave={confirmSaved}
             triggerConfirmClose={confirmCanceled}
           ></EventConfirmationForm>

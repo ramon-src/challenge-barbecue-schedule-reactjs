@@ -1,0 +1,88 @@
+.eventconfirmation {
+  .eventconfirmation__header {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    position: relative;
+    padding-top: 50px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #cfd3d7;
+
+    .eventconfirmation__primary-info-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      svg {
+        margin-right: 5px;
+      }
+
+      .eventconfirmation__date {
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+      }
+      .eventconfirmation__confirmedPeople {
+        display: flex;
+        align-items: center;
+      }
+    }
+    .eventconfirmation__secondary-info-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      svg {
+        margin-right: 5px;
+      }
+      .eventconfirmation__title {
+        font-weight: 500;
+        font-size: 1.5em;
+        display: flex;
+        align-items: center;
+      }
+      .eventconfirmation__sum {
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+  .eventconfirmation__content {
+    padding: 0px 24px;
+    border-bottom: 1px solid #cfd3d7;
+  }
+  .eventcard__confirmation {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    padding: 0px;
+  }
+  .eventconfirmation__contribute-input {
+    margin: 10px 20px;
+  }
+  .eventconfirmation__contribute-btn {
+    color: '#000';
+    width: 100%;
+    margin: 20px 5px;
+  }
+  .eventconfirmation__unsubscribe-btn {
+    color: '#fff';
+    background-color: '#d50000';
+    width: 100%;
+    margin: 20px 5px;
+  }
+  .eventconfirmation__list {
+    width: 100%;
+    font-size: 0.9rem;
+    .eventconfirmation__list-item-icon {
+      min-width: 45px;
+    }
+    .eventconfirmation__list-item-text span {
+      font-size: 0.9rem;
+    }
+    .eventconfirmation__list-item {
+      padding: 0px 48px 0px 0px;
+      & + div {
+        right: 8px;
+      }
+    }
+  }
+}
