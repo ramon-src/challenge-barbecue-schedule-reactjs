@@ -1,12 +1,12 @@
-import React, { useState, useEffect, Fragment } from 'react';
-
+import React, { useState, useEffect, useCallback } from 'react';
+import { useMappedState } from 'redux-react-hook';
+import moment from 'moment';
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogActions,
   Slide,
-  Button,
   Grid,
   FormControl,
   InputLabel,
@@ -23,6 +23,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { PeopleOutline, MonetizationOn } from '@material-ui/icons';
 import API from 'services/API';
 import ConfirmationItem from 'components/EventList/EventConfirmation/EventConfirmationItem';
+
 import './EventConfirmationForm.scss';
 
 const useStyles = makeStyles(theme => ({
@@ -53,15 +54,32 @@ const EventConfirmationForm = ({
 
   const [contributionValue, setContributionValue] = useState('');
 
+  const mapState = useCallback(state => state.user.id, []);
+  const userId = useMappedState(mapState);
+
   async function save() {
     try {
-      const resp = await API.post('/events/confirm', {
-        id: eventUsed.id
+      await API.post('/events/confirm', {
+        eventId: event.id,
+        userId: userId,
+        contributionValue
       });
-      // triggerConfirmSave(true);
+      triggerConfirmSave(true);
     } catch (e) {
       console.error(e);
-      // triggerConfirmSave(false)
+      triggerConfirmSave(false);
+    }
+  }
+  async function unsubscribe() {
+    try {
+      await API.post('/events/unsubscribe', {
+        eventId: event.id,
+        id: findUserInConfirmedList().id
+      });
+      triggerConfirmSave(true);
+    } catch (e) {
+      console.error(e);
+      triggerConfirmSave(false);
     }
   }
 
@@ -70,23 +88,18 @@ const EventConfirmationForm = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      // const resp = await API.get(`/events/${eventUsed.id}`);
-      // setEvent(resp.data);
-      let newEvent = { ...eventUsed };
-      newEvent.confirmedPeople = [
-        { username: 'Ramon Schmidt Rocha', id: '5161611', contribution: 20 },
-        { username: 'Roberta', id: '5161612', contribution: 40 },
-        { username: 'Mauricio', id: '5161613', contribution: 50 },
-        { username: 'Roberta', id: '51616134', contribution: 50 },
-        { username: 'Schmidt', id: '51616135', contribution: 50 },
-        { username: 'Joao', id: '51616136', contribution: 50 },
-        { username: 'Carlos', id: '51616137', contribution: 50 }
-      ];
-      setEvent(newEvent);
-      setConfirmedPeopleList([...newEvent.confirmedPeople]);
+      try {
+        const resp = await API.get(`/events/event/${eventUsed.id}`);
+        let eventLoaded;
+        let { confirmedPeople } = (eventLoaded = resp.data);
+        setEvent(eventLoaded);
+        setConfirmedPeopleList([...confirmedPeople]);
+      } catch (e) {
+        console.log(e);
+      }
     };
     fetchData();
-  }, [eventUsed]);
+  }, [event.responsible, eventUsed]);
 
   const handleToggleConfirm = item => () => {
     const currentIndex = confirmedPeopleList.indexOf(item);
@@ -100,6 +113,25 @@ const EventConfirmationForm = ({
     setConfirmedPeopleList(newConfirmed);
   };
 
+  function sum(confirmedPeople) {
+    if (confirmedPeople.length === 0) return 0;
+    return confirmedPeople.reduce(
+      (total, confirmed) => total + confirmed.contributionValue,
+      0
+    );
+  }
+
+  function hasConfirmedPeople() {
+    return event.confirmedPeople.length > 0;
+  }
+
+  function theFirstGuy() {
+    return !event.confirmedPeople.find(it => it.user._id === userId);
+  }
+
+  function findUserInConfirmedList() {
+    return event.confirmedPeople.find(it => it.user._id === userId);
+  }
   return (
     <Dialog
       open={open}
@@ -111,7 +143,9 @@ const EventConfirmationForm = ({
     >
       <DialogTitle className="eventconfirmation__header">
         <div className="eventconfirmation__primary-info-container">
-          <div className="eventconfirmation__date">{event.date}</div>
+          <div className="eventconfirmation__date">
+            {moment(event.date).format('DD/MM hh:mm')}
+          </div>
           <div className="eventconfirmation__confirmedPeople">
             <PeopleOutline color="secondary" />
             <span>{event.confirmedPeople.length}</span>
@@ -122,9 +156,16 @@ const EventConfirmationForm = ({
           <div className="eventconfirmation__title">{event.title}</div>
           <div className="eventconfirmation__sum">
             <MonetizationOn color="secondary" />
-            <span>{event.sum}</span>
+            <span>{sum(event.confirmedPeople)}</span>
           </div>
         </div>
+        {event.observation ? (
+          <div className="eventconfirmation__terceary-info-container">
+            <span>{event.observation}</span>
+          </div>
+        ) : (
+          ''
+        )}
         <IconButton
           aria-label="close"
           className={classes.closeButton}
@@ -133,43 +174,49 @@ const EventConfirmationForm = ({
           <CloseIcon />
         </IconButton>
       </DialogTitle>
-
-      <DialogContent className="eventconfirmation__content">
-        <Grid container item xs={12}>
-          <Grid container spacing={2}>
-            <List
-              component="div"
-              className="eventconfirmation__list"
-              role="list"
-            >
-              {event.confirmedPeople.map(user => {
-                return (
-                  <ConfirmationItem
-                    checked={confirmedPeopleList.indexOf(user) !== -1}
-                    item={user}
-                    triggerConfirm={handleToggleConfirm}
-                  ></ConfirmationItem>
-                );
-              })}
-            </List>
+      {hasConfirmedPeople() ? (
+        <DialogContent className="eventconfirmation__content">
+          <Grid container item xs={12}>
+            <Grid container spacing={2}>
+              <List
+                component="div"
+                className="eventconfirmation__list"
+                role="list"
+              >
+                {event.confirmedPeople.map(user => {
+                  return (
+                    <ConfirmationItem
+                      key={user.id}
+                      checked={confirmedPeopleList.indexOf(user) !== -1}
+                      item={user}
+                      triggerConfirm={handleToggleConfirm}
+                    ></ConfirmationItem>
+                  );
+                })}
+              </List>
+            </Grid>
           </Grid>
-        </Grid>
-      </DialogContent>
-      <DialogActions>
-        {Boolean(event.responsible) ? (
+        </DialogContent>
+      ) : (
+        ''
+      )}
+      <DialogActions className="eventconfirmation__actions">
+        {Boolean(theFirstGuy()) ? (
           <Grid container item xs={12}>
             <Grid container item justify="space-around">
               <FormControl
                 fullWidth
                 className="eventconfirmation__contribute-input"
               >
-                <InputLabel htmlFor="adornment-amount">Contribute!</InputLabel>
+                <InputLabel htmlFor="adornment-amount">
+                  {hasConfirmedPeople() ? 'Contribute!' : 'Be the first!!!'}
+                </InputLabel>
                 <Input
                   required
                   id="adornment-amount"
-                  margin="normal"
+                  margin="dense"
                   value={contributionValue}
-                  placeholder={`${event.contribution} or ${event.contributionWithDrink} with you drink`}
+                  placeholder={`$${event.contribution} or $${event.contributionWithDrink} if you drink`}
                   onChange={e => setContributionValue(e.target.value)}
                   startAdornment={
                     <InputAdornment position="start">$</InputAdornment>
@@ -199,9 +246,9 @@ const EventConfirmationForm = ({
                 size="large"
                 aria-label="unsubscribe"
                 className="eventconfirmation__unsubscribe-btn"
-                onClick={triggerConfirmClose}
+                onClick={unsubscribe}
               >
-                Unsubscribe
+                Unsubscribe me
               </Fab>
             </Grid>
           </Grid>

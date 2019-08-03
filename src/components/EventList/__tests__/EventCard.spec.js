@@ -1,19 +1,22 @@
 import React from 'react';
 import { render } from 'enzyme';
 import EventCard from '../EventCard';
+import moment from 'moment';
 
 describe('EventCard', () => {
   const fixture = {
+    id: '132',
     title: "Ramon's Birthday",
-    date: '11/02',
-    confirmedPeople: 23,
-    sum: 200
+    date: new Date(),
+    confirmedPeople: []
   };
   it('should render props', () => {
-    const eventCard = render(<EventCard {...fixture} />);
-    expect(eventCard.find('.eventcard__date').text()).toBe('11/02');
+    const eventCard = render(<EventCard event={fixture} />);
+    expect(eventCard.find('.eventcard__date').text()).toBe(
+      moment(new Date()).format('DD/MM hh:mm')
+    );
     expect(eventCard.find('.eventcard__title').text()).toBe("Ramon's Birthday");
-    expect(eventCard.find('.eventcard__confirmedPeople').text()).toBe('23');
-    expect(eventCard.find('.eventcard__sum').text()).toBe('200');
+    expect(eventCard.find('.eventcard__confirmedPeople').text()).toBe('0');
+    expect(eventCard.find('.eventcard__sum').text()).toBe('0');
   });
 });

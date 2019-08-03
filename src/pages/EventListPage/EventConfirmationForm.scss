@@ -44,10 +44,20 @@
         align-items: center;
       }
     }
+    .eventconfirmation__terceary-info-container {
+      display: flex;
+      align-items: flex-start;
+      span {
+        font-size: 0.8em;
+        color: grey;
+      }
+    }
   }
   .eventconfirmation__content {
     padding: 0px 24px;
-    border-bottom: 1px solid #cfd3d7;
+  }
+  .eventconfirmation__actions {
+    border-top: 1px solid #cfd3d7;
   }
   .eventcard__confirmation {
     position: absolute;

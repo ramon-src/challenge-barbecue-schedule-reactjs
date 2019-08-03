@@ -59,12 +59,7 @@ const EventForm = ({ open, triggerAddEvent, triggerClose }) => {
         contribution,
         responsible: responsibleId
       });
-      triggerAddEvent({
-        id: resp.data,
-        title: title,
-        date: selectedDate,
-        responsible: responsibleId
-      });
+      triggerAddEvent(resp.data);
     } catch (e) {
       console.error(e);
     }
